@@ -1,0 +1,33 @@
+import numpy as np
+from scipy.integrate import solve_ivp
+import matplotlib.pyplot as plt
+
+# Definimos la función de Heaviside
+def heaviside(x):
+    return np.where(x >= 0, 1, 0)
+
+# Definimos la función para la ecuación diferencial de segundo orden
+def dydt(t, Y):
+    y, v = Y
+    dy_dt = v
+    d2y_dt2 = - 9.80665 + 9806.65 * ((-y/25 * (heaviside(y) - heaviside(y - 1.8))) + (0.072 * heaviside(y - 1.8))) + 21 * v**2
+    return [dy_dt, d2y_dt2]
+
+# Condiciones iniciales
+y0 = [0, -196.133]
+
+# Resolviendo la ecuación diferencial
+t_span = (0, 5)  # Resolver de t=0 a t=10 segundos
+t_eval = np.linspace(t_span[0], t_span[1], 5000)
+sol = solve_ivp(dydt, t_span, y0, t_eval=t_eval)
+
+# Graficar la solución
+plt.figure(figsize=(20, 6))
+plt.plot(sol.t, sol.y[0], label='posición')
+plt.plot(sol.t, sol.y[1], label="velocidad")
+plt.title('Solución de la Ecuación Diferencial')
+plt.xlabel('Tiempo t (s)')
+plt.ylabel('funciones')
+plt.legend()
+plt.grid(True)
+plt.show()
